@@ -1,8 +1,5 @@
 # Jurnal Proses — Tugas 1
 
-> Isi jurnal ini selama proses diskusi berlangsung, bukan ditulis ulang rapi di akhir. Tulis dengan gaya bebas — poin diskusi, kebuntuan, perubahan pikiran.
-
-## [Tanggal diskusi 1]
 - Peserta:
 - Muhammad Fairuuz Dzakiy
 - Daud Achmad
@@ -16,11 +13,14 @@
 -  Menentukan solusi desain awal dan trade-off dari setiap solusi.
 - Perbedaan pendapat (jika ada): Tidak ada 
 
-## [Tanggal diskusi 2]
+
+## [Tanggal diskusi 1]
 - 18/09/2026
 
+## [Tanggal diskusi 2]
+- 
 ## Review Silang
-- [Nama] mengomentari analisis [Nama lain]: Tidak ada review silang karena analisis langsung dibahas dan disepakati bersama dalam diskusi kelompok.
+- mengomentari analisis:  Tidak ada review silang karena analisis langsung dibahas dan disepakati bersama dalam diskusi kelompok.
 
 ## Log Penggunaan AI (Level 2)
 
