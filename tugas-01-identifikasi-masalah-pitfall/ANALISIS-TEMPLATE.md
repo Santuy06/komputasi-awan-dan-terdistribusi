@@ -6,7 +6,7 @@
 |---|---|---|
 | Muhammad Fairuuz Dzakiy | 103072400120 | Pitfall 2 : Latency Is Zero |
 | [nama 2] | [nim] | [pitfall/bagian yang dikerjakan] |
-| [nama 3] | [nim] | [pitfall/bagian yang dikerjakan] |
+| Fathan Aditya Rachman | 103072400153 | [ Pitfall 3] | Single Point Of Failure 
 
 ## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
 
@@ -28,11 +28,22 @@
 
 ---
 
-## Pitfall 3: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 3: Single Point of Failure — ditulis oleh Fathan Aditya Rachman
 
-(ulangi struktur di atas)
+Bukti di skenario:
+Pada satu server disini bisa menjalankan semua modul yang ada pada FoodGo, seperti modul pesanan, pembayaran dan notifikasi kurir. ketiga modul tersebut berjalan di satu proses monilitik
 
----
+Kenapa ini keliru:
+Ketika semua fungsi bergantung pada satu server atau satu proses, kegagalan pada server tersebut bisa memengaruhi seluruh sistem. Beban yang terllau tinggi di satu modul dapat menghabiskan resource yang seharusnya digunakan oleh modul lain 
+
+Dampak ke FoodGo:
+Ketika trafik meningkat, server disini menangani semua tugas sekaligus, seperti menangani pesanan, pemabyaran dan notifikasi. Jika ini tidak di tangani server akan kewalahan dan dapat crash. Karena semua modul berada pada server yang sama, crash tersebtu membuat seluruh fungsi yang ada ikut berhenti dan membutuhkan restart manual 
+
+Solusi desain awal:
+Pisahkan modul yang ada seperti modul pesanan, pembayaran dan notifikasi agar service dapat berjlaan secara terpisah. Setiap service memiliki resource dan instance sendiri sehingga kegagaln atau beban tinggi pada satu service tidak langsung menghentikan service lainnya 
+
+Trade-off:
+Pemisahan server meningkatkan kimpleksitas sistem. Pada aplikasi Foodgo seharusnya menangani komunikasih antar-service, monitoring, deployment, dan kemungkinan kegagalan jaringan antar-service
 
 ## Kesimpulan Kelompok
 
