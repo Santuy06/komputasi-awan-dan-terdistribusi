@@ -5,20 +5,26 @@
 | Nama | NIM | Kontribusi |
 |---|---|---|
 | Muhammad Fairuuz Dzakiy | 103072400120 | Pitfall 2 : Latency Is Zero |
-| [nama 2] | [nim] | [pitfall/bagian yang dikerjakan] |
+| Daud Achmad | 103072400141 | Pitfall 1 : The network is reliable |
 | Fathan Aditya Rachman | 103072400153 | Pitfall 3 : Single Point of Failure | 
 
-## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 1: The network is reliable — ditulis oleh Daud Achmad 
 
-**Bukti di skenario:** [kutip/paraphrase bagian skenario]
+**Bukti di skenario:** **“Network is always reliable, no need for retry.”**, dan **“Tidak ada timeout sama sekali pada pemanggilan antar service.”**
 
-**Kenapa ini keliru:** [penjelasan]
+**Kenapa ini keliru:** Asumsi bahwa jaringan selalu andal dan tanpa hambatan adalah sebuah kekeliruan dalam komputasi terdistribusi. Pada kenyataannya komunikasi antar service melalui jaringan tidak selalu dapat diprediksi. Request bisa gagal di tengah jalan, koneksi bisa terputus secara tiba tiba, atau service tujuan bisa mengalami hang sehingga tidak memberikan respons.
 
-**Dampak ke FoodGo:** [mekanisme kegagalan konkret]
+**Dampak ke FoodGo:** Jika modul pembayaran mengalami gangguan atau lambat dan tidak merespons, modul pesanan akan terus menunggu tanpa batas waktu. Ketika volume pemesanan makanan meningkat, antrean request baru akan terus menumpuk di modul pesanan. Hal ini dapat menghabiskan resource server seperti thread pool dan memori. Akibatnya aplikasi FoodGo menjadi sangat lambat hingga akhirnya server mengalami crash dan sistem tumbang total.
 
-**Solusi desain awal:** [usulan solusi]
+**Solusi desain awal:** 
+- Terapkan batasan waktu tunggu atau timeout yang ketat pada setiap pemanggilan API antar service untuk membebaskan resource yang tertahan.
+- Implementasikan mekanisme coba ulang otomatis atau retry dengan jeda waktu yang semakin meningkat atau exponential backoff untuk mengatasi kegagalan jaringan yang bersifat sementara.
+- Gunakan pola 'circuit breaker' untuk langsung memutus aliran request ke modul pembayaran jika terdeteksi gagal terus-menerus sehingga modul pesanan terlindungi dari beban berlebih.
 
-**Trade-off:** [apa yang dikorbankan/risiko dari solusi ini]
+**Trade-off:** 
+- Mekanisme retry berpotensi menambah kepadatan lalu lintas jaringan dan memperberat beban kerja pada server tujuan yang mungkin sedang bermasalah.
+- Ada risiko terjadinya pembayaran ganda jika proses pembayaran di backend sebenarnya sukses, tetapi respons sukses tersebut gagal diterima oleh modul pesanan akibat gangguan jaringan.
+- Untuk memitigasi risiko pembayaran ganda, sistem wajib mengimplementasikan mekanisme Idempotency, misalnya menggunakan Idempotency Key yang menambah kompleksitas pada kode program dan basis data.
 
 ---
 
