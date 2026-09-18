@@ -6,7 +6,7 @@
 |---|---|---|
 | Muhammad Fairuuz Dzakiy | 103072400120 | Pitfall 2 : Latency Is Zero |
 | [nama 2] | [nim] | [pitfall/bagian yang dikerjakan] |
-| Fathan Aditya Rachman | 103072400153 | [ Pitfall 3] | Single Point Of Failure 
+| Fathan Aditya Rachman | 103072400153 | Pitfall 3 : Single Point of Failure | 
 
 ## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
 
@@ -22,11 +22,25 @@
 
 ---
 
-## Pitfall 2: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 2: Latency Is Zero — ditulis oleh Muhammad Fairuuz Dzakiy
 
-(ulangi struktur di atas)
+Bukti di skenario:
+FoodGo tidak memiliki timeout pada pemanggilan antar-service. Modul pesanan memanggil modul pembayaran dan menunggu tanpa batas waktu.
 
----
+
+Kenapa ini keliru:
+Dalam sistem terdistribusi, komunikasi antar-service membutuhkan waktu. Respons dari service lain bisa mengalami keterlambatan karena beban server, jaringan, atau masalah pada service tujuan. Karena itu, sistem tidak boleh menganggap respons selalu datang secara langsung.
+
+Dampak ke FoodGo:
+Ketika modul pembayaran mengalami keterlambatan, request dari modul pesanan akan terus menunggu. Saat trafik meningkat, semakin banyak request yang tertahan. Resource seperti thread dan koneksi dapat semakin banyak digunakan sehingga aplikasi menjadi lambat dan beberapa request akhirnya timeout.
+
+Solusi desain awal:
+Gunakam timeout pada komunikasi antara modul pesanan dan pembayaran. FoodGo juga dapat menggunakan asynchronous processing atau message queue untuk proses yang tidak harus menunggu respons pembayaran secara langsung.
+
+
+Trade-off:
+Asynchronous processing dapat membuat sistem lebih kompleks. Status pesanan juga perlu dikelola karena hasil pembayaran bisa diterima setelah request awal selesai
+
 
 ## Pitfall 3: Single Point of Failure — ditulis oleh Fathan Aditya Rachman
 
