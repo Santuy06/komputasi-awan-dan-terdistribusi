@@ -58,12 +58,13 @@ Kebijakan **Level 2 (AI Assisted Idea Generation & Structuring)** berlaku — li
 
 ## Hasil Pengerjaan Kelompok
 
-# 1. Pemilihan Arsitektur
+**1. Pemilihan Arsitektur**
 
 Kami memilih kombinasi SOA dan Publish-Subscribe. SOA memisahkan fungsi sistem menjadi beberapa layanan, sedangkan Publish-Subscribe memungkinkan komunikasi asinkron melalui Message Broker.
 
-# 2. Diagram Arsitektur
+**2. Diagram Arsitektur**
 
+```mermaid
 graph LR
     C[Pelanggan]
     O[Service Pesanan]
@@ -87,8 +88,9 @@ graph LR
     B -->|Subscribe RestaurantAccepted| K
 
     K -->|Notifikasi penugasan kurir, asinkron| C
+```
 
-# 3. Alur Sistem End-to-End
+**3. Alur Sistem End-to-End**
 
 1. Pelanggan membuat pesanan melalui Service Pesanan.
 2. Service Pesanan meminta pembayaran ke Service Pembayaran.
@@ -97,6 +99,6 @@ graph LR
 5. Setelah resto menyetujui pesanan, event `RestaurantAccepted` diterbitkan.
 6. Service Kurir/Notifikasi menerima event, memproses penugasan kurir, lalu mengirim notifikasi kepada pelanggan.
 
-# 4. Analisis Coupling dan Trade-off
+**4. Analisis Coupling dan Trade-off**
 
 Arsitektur ini mengurangi coupling dengan memisahkan fungsi sistem menjadi layanan yang dapat diperbarui secara terpisah. Message Broker memungkinkan layanan bertukar event tanpa harus saling terhubung langsung. Namun, penggunaan Message Broker menambah kompleksitas debugging dan pemantauan. Sistem juga perlu menangani keterlambatan atau kegagalan pengiriman event serta kemungkinan pemrosesan event berulang.
