@@ -1,14 +1,41 @@
 # Jurnal Proses — Tugas 4
 
 ## Jalur yang dipilih
-- [RPC / MQ / keduanya], alasan: ...
+Saya memilih Jalur B, yaitu Message Queue menggunakan RabbitMQ. 
+Saya memilih jalur ini karena ingin memahami bagaimana modul pembayaran bisa mengirim notifikasi 
+tanpa harus menunggu modul kurir selesai memprosesnya.
 
-## Kendala teknis
-- Error saat setup (mis. koneksi RabbitMQ ditolak, port bentrok): ...
+Pada program ini, publisher.py berperan sebagai modul pembayaran yang mengirimkan data ke antrean pembayaran_berhasil. 
+Sementara itu, consumer.py berperan sebagai modul kurir yang 
+menerima dan memproses pesan tersebut.
+
+Dengan cara ini, kedua modul tidak harus aktif dan bekerja pada waktu yang sama. Menurut saya, 
+pendekatan ini cocok untuk notifikasi pembayaran karena proses pembayaran tidak perlu menunggu respons dari modul kurir.
+
+## Kendala Teknis
+Selama mengerjakan tugas, saya perlu memahami cara menghubungkan program Python dengan RabbitMQ. 
+Program menggunakan library pika untuk melakukan komunikasi dengan message broker.
+
+Saya juga perlu memastikan bahwa publisher dan consumer menggunakan nama antrean yang sama, 
+yaitu pembayaran_berhasil. Jika nama antreannya berbeda, pesan yang dikirim tidak akan diterima oleh consumer yang diharapkan.
+
+Selain itu, RabbitMQ perlu dijalankan terlebih dahulu menggunakan Docker sebelum program publisher dan consumer digunakan. 
+Pengaturan antrean dengan durable=True dan pengiriman pesan dengan delivery_mode=2 juga digunakan agar antrean dan pesan dapat bertahan 
+ketika RabbitMQ mengalami restart, dengan tetap memperhatikan kondisi dan konfigurasi broker.
 
 ## Uji "pesan tidak hilang" (khusus Jalur B)
-- Langkah uji: matikan consumer → jalankan publisher → nyalakan consumer
-- Hasil yang diamati: ...
+Pengujian dilakukan dengan menjalankan consumer dan publisher melalui dua terminal. Consumer dijalankan untuk menerima pesan dari 
+antrean, sedangkan publisher digunakan untuk mengirimkan tiga event pembayaran.
+
+Setiap pesan berisi user_id, jumlah, dan timestamp. Berdasarkan hasil pengujian, publisher berhasil mengirimkan tiga event untuk 
+user1, user2, dan user3. Consumer kemudian menampilkan notifikasi pembayaran dengan jumlah masing-masing Rp20.000, Rp40.000, dan Rp60.000.
+
+Untuk menguji apakah pesan tetap tersimpan, consumer perlu dihentikan terlebih dahulu, kemudian publisher dijalankan untuk mengirim pesan. 
+Setelah itu, consumer dijalankan kembali. Pesan yang belum diproses seharusnya tetap berada dalam antrean dan dapat diterima ketika consumer aktif kembali.
+
+Pengujian tersebut menunjukkan manfaat message queue, yaitu pengiriman pesan tidak harus menunggu consumer tersedia. 
+Namun, pengujian perlu benar-benar dilakukan sebelum hasilnya dinyatakan berhasil. 
+Penggunaan antrean durable dan pesan persisten juga tidak menjamin semua kondisi kegagalan dapat ditangani tanpa konfigurasi tambahan.
 
 ## Log Penggunaan AI (Level 2)
 
