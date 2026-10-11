@@ -1,46 +1,18 @@
 # Jurnal Proses — Tugas 4
 
 ## Jalur yang dipilih
-Saya memilih Jalur B, yaitu Message Queue menggunakan RabbitMQ. 
-Saya memilih jalur ini karena ingin memahami bagaimana modul pembayaran bisa mengirim notifikasi 
-tanpa harus menunggu modul kurir selesai memprosesnya.
 
-Pada program ini, publisher.py berperan sebagai modul pembayaran yang mengirimkan data ke antrean pembayaran_berhasil. 
-Sementara itu, consumer.py berperan sebagai modul kurir yang 
-menerima dan memproses pesan tersebut.
+- Keduanya, RPC dan MQ. RPC digunakan untuk komunikasi sinkron antara modul Pesanan dan Pembayaran, misalnya saat mengecek saldo dan memproses pembayaran. Sedangkan MQ digunakan untuk mengirim notifikasi secara asinkron, jadi modul Pembayaran tidak perlu menunggu modul Kurir selesai memproses pesan.
 
-Dengan cara ini, kedua modul tidak harus aktif dan bekerja pada waktu yang sama. Menurut saya, 
-pendekatan ini cocok untuk notifikasi pembayaran karena proses pembayaran tidak perlu menunggu respons dari modul kurir.
+## Kendala teknis
 
-## Kendala Teknis
-Selama mengerjakan tugas, saya perlu memahami cara menghubungkan program Python dengan RabbitMQ. 
-Program menggunakan library pika untuk melakukan komunikasi dengan message broker.
-
-Saya juga perlu memastikan bahwa publisher dan consumer menggunakan nama antrean yang sama, 
-yaitu pembayaran_berhasil. Jika nama antreannya berbeda, pesan yang dikirim tidak akan diterima oleh consumer yang diharapkan.
-
-Selain itu, RabbitMQ perlu dijalankan terlebih dahulu menggunakan Docker sebelum program publisher dan consumer digunakan. 
-Pengaturan antrean dengan durable=True dan pengiriman pesan dengan delivery_mode=2 juga digunakan agar antrean dan pesan dapat bertahan 
-ketika RabbitMQ mengalami restart, dengan tetap memperhatikan kondisi dan konfigurasi broker.
+- Kami sempat mengalami masalah pada virtual environment (venv) karena library `pika` tidak ditemukan saat menjalankan program. Error yang muncul adalah `ModuleNotFoundError: No module named 'pika'`. Untuk mengatasinya, kami perlu memastikan virtual environment yang digunakan sudah benar dan menginstal dependensi melalui `python -m pip install -r requirements.txt`.
 
 ## Uji "pesan tidak hilang" (khusus Jalur B)
-Pengujian dilakukan dengan menjalankan consumer dan publisher melalui dua terminal. Consumer dijalankan untuk menerima pesan dari 
-antrean, sedangkan publisher digunakan untuk mengirimkan tiga event pembayaran.
 
-Setiap pesan berisi user_id, jumlah, dan timestamp. Berdasarkan hasil pengujian, publisher berhasil mengirimkan tiga event untuk 
-user1, user2, dan user3. Consumer kemudian menampilkan notifikasi pembayaran dengan jumlah masing-masing Rp20.000, Rp40.000, dan Rp60.000.
+- Langkah uji: Kami mematikan consumer terlebih dahulu, kemudian menjalankan publisher untuk mengirim pesan. Setelah itu, consumer dijalankan kembali untuk melihat apakah pesan yang sudah dikirim masih bisa diterima.
+- Hasil yang diamati: Pada jalur RPC, client berhasil menerima respons dari server untuk pengecekan saldo dan pemrosesan pembayaran. Pada jalur MQ, publisher berhasil mengirim tiga pesan pembayaran, lalu consumer menerima dan memproses notifikasi dengan jumlah Rp20.000, Rp40.000, dan Rp60.000. Untuk memastikan pesan tidak hilang saat consumer mati, hasil pengujian perlu diperiksa berdasarkan pesan yang diterima setelah consumer dijalankan kembali.
 
-Untuk menguji apakah pesan tetap tersimpan, consumer perlu dihentikan terlebih dahulu, kemudian publisher dijalankan untuk mengirim pesan. 
-Setelah itu, consumer dijalankan kembali. Pesan yang belum diproses seharusnya tetap berada dalam antrean dan dapat diterima ketika consumer aktif kembali.
-
-Pengujian tersebut menunjukkan manfaat message queue, yaitu pengiriman pesan tidak harus menunggu consumer tersedia. 
-Namun, pengujian perlu benar-benar dilakukan sebelum hasilnya dinyatakan berhasil. 
-Penggunaan antrean durable dan pesan persisten juga tidak menjamin semua kondisi kegagalan dapat ditangani tanpa konfigurasi tambahan.
-
-## Log Penggunaan AI (Level 2)
-
-> Wajib diisi sesuai kebijakan Level 2 di [`../RUBRIK-UMUM.md`](../RUBRIK-UMUM.md). Tulis "Tidak memakai AI" pada baris pertama jika memang tidak dipakai. Hanya untuk brainstorming ide/outline — bukan untuk kode/analisis/teks akhir.
-
-| Tanggal    | Tool AI | Prompt yang diberikan                                                                                    | Ringkasan saran/ide AI                                                                                                                                | Bagaimana diolah jadi tulisan/kode sendiri                                                                                                                          |
-| ---------- | ------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 11-11-2026 | ChatGPT | Meminta bantuan menyusun jurnal proses tugas Message Queue berdasarkan instruksi tugas dan kode publisher serta consumer. |Membantu menyusun kerangka jurnal yang mencakup alasan pemilihan jalur, kendala teknis, dan pengujian pesan. | Saya memeriksa kembali isi jurnal dengan kode dan hasil pengujian yang saya jalankan, lalu menyesuaikan penjelasan dengan proses pengerjaan saya sendiri. |
+| Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
+|---|---|---|---|---|
+| 11 Oktober 2026 | ChatGPT | Bedanya RPC sama message queue itu apa, terus cara kerjanya di RabbitMQ gimana? | Mendapat penjelasan tentang perbedaan RPC dan message queue, termasuk cara kerja publisher dan consumer. | Kami membaca penjelasannya, lalu mencocokkannya dengan kode yang digunakan supaya lebih paham cara kerja programnya. |
